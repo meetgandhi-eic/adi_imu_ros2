@@ -30,7 +30,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "ros/ros.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -391,7 +390,7 @@ int Adis16470::bias_correction_update(void)
 {
   // Bit0: Bias correction update
   int16_t data = 1;
-  write_register(0x68, data);
+  return (0 == write_register(0x68, data));
 }
 
 
