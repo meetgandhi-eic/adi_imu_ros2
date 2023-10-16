@@ -99,9 +99,9 @@ public:
     // Data publisher
     imu_data_pub_ = this->create_publisher<sensor_msgs::msg::Imu>("imu", 100);
     if (publish_temperature_)
-      {
+    {
         temp_data_pub_ = this->create_publisher<sensor_msgs::msg::Temperature>("temperature", 100);
-      }
+    }
   }
 
   ~ImuNode()
@@ -176,53 +176,25 @@ public:
   }
   void publish_data()
   {
+    bool publish_temp = false;
+    if ((burst_mode_) && (0 != imu.update_burst())) //burst mode
     {
-      if (burst_mode_)
-      {
-        if (imu.update_burst() == 0)
-        {
-          publish_imu_data();
-        }
-        else
-        {
-          RCLCPP_ERROR(this->get_logger(), "Cannot update burst");
-        }
-      }
-      else if (publish_temperature_)
-      {
-        if (imu.update() == 0)
-        {
-          publish_imu_data();
-          publish_temp_data();
-        }
-        else
-        {
-          RCLCPP_ERROR(this->get_logger(), "Cannot update");
-        }
-      }
-      else if (burst_mode_ && publish_temperature_)
-      {
-        if (imu.update_burst() == 0)
-        {
-          publish_imu_data();
-          publish_temp_data();
-        }
-        else
-        {
-          RCLCPP_ERROR(this->get_logger(), "Cannot update burst");
-        }
-      }
-      else
-      {
-        if (imu.update() == 0)
-        {
-          publish_imu_data();
-        }
-        else
-        {
-          RCLCPP_ERROR(this->get_logger(), "Cannot update");
-        }
-      }
+      RCLCPP_ERROR(this->get_logger(), "Cannot update burst");
+      return;
+    }
+    else if (0 != imu.update()) //normal mode
+    {
+      RCLCPP_ERROR(this->get_logger(), "Cannot update");
+      return;
+    }
+    
+    // publish IMU data
+    publish_imu_data();
+
+    //publish temperature if enabled
+    if (temp_data_pub_)
+    {
+      publish_temp_data();
     }
   }
 };
