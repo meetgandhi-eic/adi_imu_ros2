@@ -39,16 +39,18 @@
 class Adis16470
 {
 public:
-  //! File descripter for USB-ISS
+  //! product id
+  static constexpr int16_t product_id_ = 16470;
+  //! File descriptor for USB-ISS
   int fd_;
   //! Saved terminal config
   struct termios defaults_;
 
-  // Gyro sensor(x, y, z)
+  //! Gyro sensor(x, y, z)
   double gyro[3];
-  // Acceleration sensor(x, y, z)
+  //! Acceleration sensor(x, y, z)
   double accl[3];
-  // Temperature sensor
+  //! Temperature sensor
   double temp;
 
   Adis16470();
@@ -57,8 +59,8 @@ public:
   int get_product_id(int16_t& data);
   int update(void);
   int update_burst(void);
-  int read_register(char address, int16_t& data);
-  int write_register(char address, int16_t data);
+  int read_register(unsigned char address, int16_t& data);
+  int write_register(unsigned char address, int16_t data);
   int bias_correction_update(void);
   int set_bias_estimation_time(int16_t tbc);
 };
