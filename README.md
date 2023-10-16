@@ -1,20 +1,12 @@
-# adi_driver [![Build Status](https://travis-ci.org/tork-a/adi_driver.svg?branch=master)](https://travis-ci.org/tork-a/adi_driver) [![CircleCI](https://circleci.com/gh/tork-a/adi_driver.svg?style=svg)](https://circleci.com/gh/tork-a/adi_driver)
+# adi_imu_ros2
 
-This package contains ROS driver nodes for Analog Devices(ADI) sensor
+This package contains ROS 2 driver nodes for Analog Devices(ADI) sensor
 products mainly communicate by SPI(Serial Periferal Interface).
 
 Currently supported devices are:
 
 - [ADIS16470](http://www.analog.com/en/products/mems/inertial-measurement-units/adis16470.html)
   - Wide Dynamic Range Mini MEMS IMU
-
-- [ADXL345](http://www.analog.com/en/products/mems/accelerometers/adxl345.html):
-  - 3-Axis, ±2 g/±4 g/±8 g/±16 g Digital Accelerometer
-  - The support for this device is experimental
-  
-- [ADIS16495](http://www.analog.com/en/products/mems/inertial-measurement-units/adis16495.html)
-  - Higher grade MEMS IMU
-  - The support for this device is experimental
   
 You need a SPI interface on your PC to communicate with device. This
 package supports
@@ -99,9 +91,9 @@ GND). They are connected in the breakout board.
 
 ### Quick start
 
-Connect your sensor to USB port. Run the launch file as:
+Connect your sensor to USB port. Run the adis16470_node as:
 
-``` $ roslaunch adi_driver adis16470.launch ```
+``` $ ros2 run adi_imu_ros2 adis16470_node ```
 
 You can see the model of ADIS16470 breakout board in rviz panel.
 
@@ -111,18 +103,12 @@ You can see the model of ADIS16470 breakout board in rviz panel.
 
 ### Topics
 
-- /imu/data_raw (sensor_msgs/Imu)
+- /imu (sensor_msgs/Imu)
 
   IMU raw output. It contains angular velocities and linear
   accelerations. The orientation is always unit quaternion.
 
-- /imu/data (sensor_msgs/Imu)
-
-  IMU filtered output by `imu_filter_madgwick`. It contains angular
-  velocities and linear accelerations. The orientation is always unit
-  quaternion.
-
-- /imu/temperature (sensor_msgs/Temperature)
+- /temperature (sensor_msgs/Temperature)
 
   Temperature of the IMU. To publish this message, you need to set
   true the parameter named 'publish_temperature'. See sample launch
@@ -138,36 +124,3 @@ You can see the model of ADIS16470 breakout board in rviz panel.
   are calcuarated as the average of the duration. The sensor value are
   obtained after it is substracted by the bias value. The bias value
   is stored on the chip and cleared when it powered up or reset.
-
-## ADXL345
-
-### Overview
-
-<div align="center">
-  <img src="doc/ADXL345_Breakout.jpg" width="60%"/>
-</div>
-
-<div align="center">
-  <img src="doc/ADXL345_Connection.jpg" width="60%"/>
-</div>
-
-The ADXL345 is a small, thin, low power, 3-axis accelerometer with
-high resolution (13-bit) measurement at up to ±16g. At this moment,
-support for this device is experimental.
-
-## ADIS16495
-
-### Overview
-
-
-<div align="center">
-  <img src="doc/adis16495_connection.jpg" width="60%"/>
-</div>
-
-USB-ISS 3.3V output can supply up to 80mA.
-ADIS16495 supply current is 89mA(typical). External Linear Regulator(LDO) help power supply requirment for ADIS16495.
-The picture used ADP125(Evaluation board) which is 500mA LDO for 5V to 3.3V. The 5V is from USB-ISS 5V pin. 
-
-<div align="center">
-  <img src="doc/adis16495_schematic2.jpg" width="60%"/>
-</div>
