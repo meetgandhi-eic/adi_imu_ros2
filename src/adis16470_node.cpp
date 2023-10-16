@@ -33,6 +33,7 @@
 #include "adi_driver/adis16470.h"
 
 #include <string>
+#include <functional>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/temperature.hpp>
@@ -40,6 +41,7 @@
 #include <unistd.h>
 
 using namespace std::chrono_literals;
+using namespace std::placeholders;
 
 class ImuNode : public rclcpp::Node
 {
@@ -47,6 +49,7 @@ public:
   Adis16470 imu;
   rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_data_pub_;
   rclcpp::Publisher<sensor_msgs::msg::Temperature>::SharedPtr temp_data_pub_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr bias_srv_;
   std::string device_;
   std::string frame_id_;
   bool burst_mode_;
@@ -55,23 +58,20 @@ public:
   rclcpp::TimerBase::SharedPtr timer_;
 
 
-//todo: add bias_estimate service
-#if 0
-  bool bias_estimate (std_srvs::Trigger::Request &req,
-                      std_srvs::Trigger::Response &res)
+  void bias_estimate (const std_srvs::srv::Trigger::Request::SharedPtr req,
+                      const std_srvs::srv::Trigger::Response::SharedPtr res)
   {
-    ROS_INFO("bias_estimate");
     if (imu.bias_correction_update() < 0)
     {
-      res.success = false;
-      res.message = "Bias correction update failed";
-      return false;
+      res->success = false;
+      res->message = "Bias correction update failed";
+      RCLCPP_INFO(this->get_logger(), "bias_estimate failed");
+      return;
     }
-    res.success = true;
-    res.message = "Success";
-    return true;
+    res->success = true;
+    res->message = "Bias correction update success";
+    RCLCPP_INFO(this->get_logger(), "bias_estimate success");
   }
-#endif
 
   explicit ImuNode()
   : Node("imu_adis16470")
@@ -102,6 +102,9 @@ public:
     {
         temp_data_pub_ = this->create_publisher<sensor_msgs::msg::Temperature>("temperature", 100);
     }
+
+    bias_srv_ = this->create_service<std_srvs::srv::Trigger>("bias_estimate",
+                                                              std::bind(&ImuNode::bias_estimate, this, _1, _2));
   }
 
   ~ImuNode()
