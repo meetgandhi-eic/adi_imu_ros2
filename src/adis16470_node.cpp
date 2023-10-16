@@ -65,7 +65,7 @@ public:
     {
       res->success = false;
       res->message = "Bias correction update failed";
-      RCLCPP_INFO(this->get_logger(), "bias_estimate failed");
+      RCLCPP_ERROR(this->get_logger(), "bias_estimate failed");
       return;
     }
     res->success = true;
@@ -134,7 +134,13 @@ public:
     usleep(10000);
     int16_t pid = 0;
     imu.get_product_id(pid);
-    RCLCPP_INFO(this->get_logger(), "Product ID: %d\n", pid);
+    if (imu.product_id_ != pid) {
+      RCLCPP_ERROR(this->get_logger(), "Port opened but found invalid product ID: %d expected: %d",
+                                        pid, imu.product_id_);
+      imu.closePort();
+      return false;
+    }
+    RCLCPP_INFO(this->get_logger(), "Product ID: %d", pid);
     imu.set_bias_estimation_time(0x070a);
     return true;
   }
@@ -208,7 +214,7 @@ int main(int argc, char** argv)
   auto node = std::make_shared<ImuNode>();
 
   node->open();
-  while (!node->is_opened())
+  while (!node->is_opened() && rclcpp::ok())
   {
     RCLCPP_WARN(node->get_logger(), "Keep trying to open the device in 1 second period...");
     sleep(1);

@@ -138,6 +138,7 @@ void Adis16470::closePort()
     perror("closePort");
   }
   close(fd_);
+  fd_ = -1;
 }
 
 /**
