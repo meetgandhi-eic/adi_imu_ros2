@@ -204,10 +204,10 @@ int Adis16470::get_product_id(int16_t& pid)
  * @retval 0 Success
  * @retval -1 Failed
  * 
- * - Adress is the first byte of actual address
- * - Actual data at the adress will be returned by next call.
+ * - Address is the first byte of actual address
+ * - Actual data at the address will be returned by next call.
  */
-int Adis16470::read_register(char address, int16_t& data)
+int Adis16470::read_register(unsigned char address, int16_t& data)
 {
   unsigned char buff[3] = {0x61, address, 0x00};
   int size = write(fd_, buff, 3);
@@ -237,10 +237,10 @@ int Adis16470::read_register(char address, int16_t& data)
  * @retval 0 Success
  * @retval -1 Failed
  * 
- * - Adress is the first byte of actual address.
- * - Specify data at the adress.
+ * - address is the first byte of actual address.
+ * - Specify data at the address.
  */
-int Adis16470::write_register(char address, int16_t data)
+int Adis16470::write_register(unsigned char address, int16_t data)
 {
   unsigned char buff[5] = {0x61, 0x00, 0x00, 0x00, 0x00};
   // Set R~/W bit 1
@@ -389,8 +389,7 @@ int Adis16470::set_bias_estimation_time(int16_t tbc)
 int Adis16470::bias_correction_update(void)
 {
   // Bit0: Bias correction update
-  int16_t data = 1;
-  return (0 == write_register(0x68, data));
+  return write_register(0x68, 0x1);
 }
 
 
