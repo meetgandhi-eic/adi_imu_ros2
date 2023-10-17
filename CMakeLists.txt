@@ -29,7 +29,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
   FILES_MATCHING PATTERN "*.h"
   )
 
-install(DIRECTORY
+install(DIRECTORY launch urdf config
   DESTINATION share/${PROJECT_NAME}
   USE_SOURCE_PERMISSIONS
   )
