@@ -113,7 +113,7 @@ ros2 launch adi_imu_ros2 adis16470.launch.py with_rviz:=True
 You can see the model of ADIS16470 breakout board in rviz panel.
 
 <div align="center">
-  <img src="doc/img_rviz.png" width="60%"/>
+  <img src="doc/adis16470_rviz.png" width="60%"/>
 </div>
 
 ### Topics
