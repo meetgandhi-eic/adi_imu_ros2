@@ -91,9 +91,24 @@ GND). They are connected in the breakout board.
 
 ### Quick start
 
-Connect your sensor to USB port. Run the adis16470_node as:
+Building the ros2 package
 
-``` $ ros2 run adi_imu_ros2 adis16470_node ```
+```
+mkdir -p ros2_ws/src
+cd ros2_ws/src
+git clone https://github.com/meetgandhi-eic/adi_imu_ros2.git
+cd ..
+colcon build
+source install/setup.sh
+```
+
+Connect your sensor to USB port.
+
+Launch the adis16470_node with rviz visualization node as:
+
+```
+ros2 launch adi_imu_ros2 adis16470.launch.py with_rviz:=True
+```
 
 You can see the model of ADIS16470 breakout board in rviz panel.
 
